@@ -1,0 +1,27 @@
+[
+  {
+    "method": "GET",
+    "path": "/",
+    "name": "main.main.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/hello",
+    "name": "main.main.func2"
+  },
+  {
+    "method": "GET",
+    "path": "/users",
+    "name": "main.getUsers"
+  },
+  {
+    "method": "GET",
+    "path": "/users/:id",
+    "name": "main.getUserById"
+  },
+  {
+    "method": "DELETE",
+    "path": "/users/:id",
+    "name": "main.deleteUser"
+  }
+]
