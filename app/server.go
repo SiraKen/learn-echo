@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -17,8 +18,8 @@ type User struct {
 
 func main() {
 	e := echo.New()
-	// path ---
-
+	
+	// --------------------------------------------------------------------------------
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, world")
 	})
@@ -29,11 +30,19 @@ func main() {
 
 	e.GET("/users", getUsers)
 	e.GET("/users/:id", getUserById)
+	// --------------------------------------------------------------------------------
+	
+	// set port
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "1323"
+	}
 
-	// --
-	println("http://localhost:1323")
-	e.Logger.Fatal(e.Start(":1323"))
+	// start server
+	println("http://localhost:" + port)
+	e.Logger.Fatal(e.Start(":" + port))
 }
+
 
 func getUsers(c echo.Context) error {
 
