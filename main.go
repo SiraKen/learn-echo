@@ -2,21 +2,22 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	"myapp/database"
+	c "lecho/controllers"
 )
 
-type User struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Email string `json:"email"`
+// Export routes data to json file
+func exportRoutesToJson(r []*echo.Route) {
+	data, err := json.MarshalIndent(r, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	os.WriteFile("routes.json", data, 0644)
 }
 
 func main() {
@@ -36,30 +37,18 @@ func main() {
 	// }))
 
 	e.Pre(middleware.RemoveTrailingSlash())
-	
-	// --------------------------------------------------------------------------------
+
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, world")
+		return c.String(http.StatusOK, "Hello World!")
 	})
 
-	e.GET("/hello", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, world")
-	})
+	rUsers := e.Group("/users")
+	rUsers.GET("/", c.GetUsers)
+	rUsers.GET("/:id", c.GetUserById)
+	rUsers.DELETE("/:id", c.DeleteUser)
 
-	
+	exportRoutesToJson(e.Routes())
 
-	e.GET("/users", getUsers)
-	e.GET("/users/:id", getUserById)
-	e.DELETE("/users/:id", deleteUser)
-	// --------------------------------------------------------------------------------
-
-	// export routes data to json file
-	data, err := json.MarshalIndent(e.Routes(), "", "  ")
-	if err != nil {
-		panic(err)
-	}
-	ioutil.WriteFile("routes.json", data, 0644)
-	
 	// set port
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -69,62 +58,4 @@ func main() {
 	// start server
 	println("http://localhost:" + port)
 	e.Logger.Fatal(e.Start(":" + port))
-}
-
-
-func getUsers(c echo.Context) error {
-
-	db := database.Connect()
-
-	var users []User
-
-	result := db.Find(&users)
-
-	if result.Error != nil {
-		return c.String(http.StatusInternalServerError, result.Error.Error())
-	}
-
-	return c.JSON(http.StatusOK, users)
-}
-
-func getUserById(c echo.Context) error {
-
-	db := database.Connect()
-
-	var user User
-
-	id, err := strconv.Atoi(c.Param("id"))
-
-	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
-	}
-
-	result := db.First(&user, id)
-
-	if result.Error != nil {
-		return c.String(http.StatusInternalServerError, result.Error.Error())
-	}
-
-	return c.JSON(http.StatusOK, user)
-}
-
-func deleteUser(c echo.Context) error {
-	
-	db := database.Connect()
-
-	var user User
-
-	id, err := strconv.Atoi(c.Param("id"))
-
-	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
-	}
-
-	result := db.Delete(&user, id)
-
-	if result.Error != nil {
-		return c.String(http.StatusInternalServerError, result.Error.Error())
-	}
-
-	return c.JSON(http.StatusOK, user)
 }

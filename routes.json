@@ -6,22 +6,17 @@
   },
   {
     "method": "GET",
-    "path": "/hello",
-    "name": "main.main.func2"
-  },
-  {
-    "method": "GET",
-    "path": "/users",
-    "name": "main.getUsers"
+    "path": "/users/",
+    "name": "lecho/controllers.GetUsers"
   },
   {
     "method": "GET",
     "path": "/users/:id",
-    "name": "main.getUserById"
+    "name": "lecho/controllers.GetUserById"
   },
   {
     "method": "DELETE",
     "path": "/users/:id",
-    "name": "main.deleteUser"
+    "name": "lecho/controllers.DeleteUser"
   }
 ]

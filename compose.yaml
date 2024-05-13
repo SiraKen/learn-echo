@@ -1,26 +1,14 @@
 version: "3"
 services:
-  goapp:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    tty: true
-    volumes:
-      - ./app:/go/src/app
-    ports:
-      - "1323:1323"
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0.32
     environment:
+      MYSQL_DATABASE: "echo"
       MYSQL_ROOT_PASSWORD: "root"
     volumes:
       - echo-mysql:/var/lib/mysql
     ports:
       - "3306:3306"
-    depends_on:
-      - goapp
-    restart: always
-    platform: linux/amd64
 volumes:
   echo-mysql:
     driver: local
